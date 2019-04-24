@@ -1,0 +1,36 @@
+---
+- name: My First Playbook
+  hosts: all
+  tasks:
+    - name: Get OS Version
+      command: cat /proc/version
+      register: version
+    - debug: msg="{{ version.stdout }}"
+   
+    - name: Install Apache on Centos
+      yum:
+        name: httpd
+        state: present
+      become: yes
+      when: '"centos" in version.stdout'
+
+    - name: Enable HTTP on CentOS
+      service:
+        name: httpd
+        state: started
+      become: yes
+      when: '"centos" in version.stdout'
+
+    - name: Install NGinx on Ubuntu
+      apt: 
+        name: nginx
+      become: yes
+      when: '"ubuntu" in version.stdout'
+
+    - name: Start NGinx
+      service:
+        name: nginx
+        state: started
+      become: yes
+      when: '"ubuntu" in version.stdout'
+...
